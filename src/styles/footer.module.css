@@ -1,0 +1,117 @@
+.title {
+    font-family: 'Roboto', sans-serif;
+}
+
+.button {
+    padding-top: 10px;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.button:hover {
+    background-color: #198754;
+    border-color: #198754;
+    color: darkorange;
+    font-weight: bold;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+}
+
+.button2 {
+    padding-right: 15px;
+    margin-left: 0%;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.button2:hover {
+    background-color: #198754;
+    border-color: #198754;
+    color: darkorange;
+    font-weight: bold;
+}
+
+.button3 {
+    padding-right: 15px;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.button3:hover {
+    background-color: #198754;
+    border-color: #198754;
+    color: darkorange;
+    font-weight: bold;
+}
+
+.button4 {
+    padding-right: 15px;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.button4:hover {
+    background-color: #198754;
+    border-color: #198754;
+    color: darkorange;
+    font-weight: bold;
+}
+
+.calendar {
+    padding-right: 15px;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.calendar:hover {
+    background-color: #198754;
+    border-color: #198754;
+    color: darkorange;
+    font-weight: bold;
+}
+
+.information {
+    font-family: 'Roboto', sans-serif;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.information:hover {
+    background-color: #198754;
+    border-color: #198754;
+    color: darkorange;
+}
+
+.button5 {
+    padding-right: 30%;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    background-color: #198754;
+    border-color: #198754;
+}
+  
+.button5:hover {
+    background-color: #198754;
+    border-color: #198754;
+    color: darkorange;
+    font-weight: bold;
+}
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 10px;
+}

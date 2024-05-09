@@ -1,0 +1,40 @@
+.cardBody {
+    min-width: 300px;
+}
+
+.button {
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.button:hover {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.register {
+    font-family: 'Roboto', sans-serif;
+}
+
+.RegisterPage.cardBody {
+    font-family: 'Roboto', sans-serif;
+}
+
+.registerPageContents {
+    font-family: 'Roboto', sans-serif;
+}
+
+.submit_button {
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    background-color: #198754;
+    border-color: #198754;
+    width: 250px;
+}
+
+.submit_button:hover {
+    background-color: #198754;
+    border-color: #198754;
+}

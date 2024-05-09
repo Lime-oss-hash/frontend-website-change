@@ -1,0 +1,29 @@
+.button {
+    padding-top: 10px;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.button:hover {
+    background-color: #198754;
+    border-color: #198754;
+    font-weight: bold;
+}
+
+.dataPages {
+    font-family: 'Roboto', sans-serif;
+}
+
+.rostersGrid {
+    font-family: 'Roboto', sans-serif;
+}
+
+.card {
+    font-family: 'Roboto', sans-serif;
+}
+
+.rosterPage {
+    font-family: 'Roboto', sans-serif;
+}

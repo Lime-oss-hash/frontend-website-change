@@ -1,0 +1,126 @@
+.img {
+  max-width: 100%;
+  max-height: 100%;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  margin: auto;
+}
+
+.title {
+  font-family: 'Roboto', sans-serif;
+}
+
+.button {
+  padding-top: 10px;
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.button:hover {
+  background-color: #198754;
+  border-color: #198754;
+  color: darkorange;
+  font-weight: bold;
+}
+
+.button2 {
+  padding: 10px;
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.button2:hover {
+  background-color: #198754;
+  border-color: #198754;
+  color: darkorange;
+  font-weight: bold;
+}
+
+.button3 {
+  padding: 10px;
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.button3:hover {
+  background-color: #198754;
+  border-color: #198754;
+  color: darkorange;
+  font-weight: bold;
+}
+
+.button4 {
+  padding: 10px;
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.button4:hover {
+  background-color: #198754;
+  border-color: #198754;
+  color: darkorange;
+  font-weight: bold;
+}
+
+.information {
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.information:hover {
+  background-color: #198754;
+  border-color: #198754;
+  color: darkorange;
+}
+
+.button5 {
+  padding: 10px;
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.button5:hover {
+  background-color: #198754;
+  border-color: #198754;
+  color: darkorange;
+  font-weight: bold;
+}
+
+.modalContents {
+  font-family: 'Roboto', sans-serif;
+}
+
+.forgotpassword {
+  background-color: #198754;
+}
+
+.forgotpassword:hover {
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.resetpassword {
+  background-color: #198754;
+}
+
+.resetpassword:hover {
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.dataPage {
+  font-family: 'Roboto', sans-serif;
+}

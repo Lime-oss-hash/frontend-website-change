@@ -1,0 +1,142 @@
+.PageHeader {
+    padding: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    text-align: right;
+    margin-left: 300px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.calendarTitle {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    font-size: large;
+}
+
+.calendar_grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+}
+
+.weekday {
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+}
+
+.empty_day {
+    height: 20px;
+}
+
+.calendar_day {
+    border: 1px solid #ddd;
+    padding: 15px;
+    cursor: pointer;
+}
+
+.next {
+    background-color: #198754;
+    border-color: #198754;
+    margin-left: 10px;
+}
+
+.next:hover {
+    background-color: #198754;
+    border-color: #198754;
+    font-weight: bold;
+    color: darkorange;
+}
+
+.previous {
+    background-color: #198754;
+    border-color: #198754;
+    margin-right: 10px;
+}
+
+.previous:hover {
+    background-color: #198754;
+    border-color: #198754;
+    font-weight: bold;
+    color: darkorange;
+}
+
+.Date {
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+}
+
+.calendarPage {
+    font-family: 'Roboto', sans-serif;
+}
+
+.calendarContents {
+    font-family: 'Roboto', sans-serif;
+}
+
+.headerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.date {
+    font-family: 'Roboto', sans-serif;
+}
+
+.title {
+    font-family: 'Roboto', sans-serif;
+    color: white;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.Title {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+}
+
+.calendar {
+    font-family: 'Roboto', sans-serif;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.button {
+    font-family: 'Roboto', sans-serif;
+    background-color: #198754;
+    border-color: #198754;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #198754;
+    border-color: #198754;
+    font-weight: bold;
+}
+
+.buttonGroup {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.container {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    font-size: larger;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10%;
+}
+
+.calendarGrid {
+    font-family: 'Roboto', sans-serif;
+}
+
+.card {
+    width: 25rem;
+}
