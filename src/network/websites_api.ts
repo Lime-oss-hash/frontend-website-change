@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { ConflictError, UnauthorizedError } from "../errors/http_errors";
 import { User } from "../models/user";
 import { Staff } from "../models/staff";
@@ -5,6 +6,18 @@ import { Registers } from "../models/registers";
 import { Bookings } from "../models/bookings";
 import { Rosters } from "../models/rosters";
 import { Calendars } from "../models/calendars";
+
+
+const API_URL = process.env.REACT_APP_BACKEND_URL;
+
+
+const apiClient = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 
 async function fetchData(input: RequestInfo, init?: RequestInit) {
     const response = await fetch(input, init);
@@ -18,16 +31,29 @@ async function fetchData(input: RequestInfo, init?: RequestInit) {
         } else if (response.status === 409) {
             throw new ConflictError(errorMessage);
         } else {
-            throw Error("Request failed with status: " + response.status + " message: " + 
+            throw Error("Request failed with status: " + response.status + " message: " +
             errorMessage+"===="+JSON.stringify(response)+"===="+JSON.stringify(init));
         }
     }
 }
 
+
+export const fetchUsers = async () => {
+  try {
+    const response = await apiClient.get('/api/users');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
+  }
+};
+
+
 export async function getLoggedInUser(): Promise<User> {
     const response = await fetchData("/api/users", { method: "GET" });
     return response.json();
 }
+
 
 export interface SignUpUserCredentials {
     username: string,
@@ -51,6 +77,7 @@ export interface SignUpUserCredentials {
     emergencyRelationship: string,
 }
 
+
 export async function SignUpUser(credentials: SignUpUserCredentials): Promise<User> {
     const response = await fetchData("/api/users/usersignup",
     {
@@ -63,10 +90,12 @@ export async function SignUpUser(credentials: SignUpUserCredentials): Promise<Us
     return response.json();
 }
 
+
 export interface UserLoginCredentials {
     username: string,
     password: string,
 }
+
 
 export async function userLogin(credentials: UserLoginCredentials) {
     const response = await fetchData("/api/users/userlogin",
@@ -80,15 +109,18 @@ export async function userLogin(credentials: UserLoginCredentials) {
     return response.json();
 }
 
+
 export async function userLogout() {
     await fetchData("/api/users/userlogout", { method: "POST" });
 }
+
 
 export interface UserForgotPassowrdCredentials {
     firstName: string,
     lastName: string,
     email: string,
 }
+
 
 export async function userForgotPassword(credentials: UserForgotPassowrdCredentials): Promise<User> {
     const response = await fetchData("/api/users/userforgotpassword/:userId",
@@ -102,9 +134,11 @@ export async function userForgotPassword(credentials: UserForgotPassowrdCredenti
     return response.json();
 }
 
+
 export interface UserChangePasswordCredentials {
     password: string,
 }
+
 
 export async function userChangePassword(credentials: UserChangePasswordCredentials): Promise<User> {
     const response = await fetchData("/api/users/userresetpassword/:userId/accessToken",
@@ -118,15 +152,18 @@ export async function userChangePassword(credentials: UserChangePasswordCredenti
     return response.json();
 }
 
+
 export async function getLoggedInStaff(): Promise<User> {
     const response = await fetchData("/api/staffs", { method: "GET" });
     return response.json();
 }
 
+
 export interface StaffLoginCredentials {
     email: string,
     password: string,
 }
+
 
 export async function staffLogin(credentials: StaffLoginCredentials): Promise<Staff> {
     const response = await fetchData("/api/staffs/stafflogin",
@@ -140,34 +177,41 @@ export async function staffLogin(credentials: StaffLoginCredentials): Promise<St
     return response.json();
 }
 
+
 export async function staffLogout() {
     await fetchData("/api/staffs/stafflogout", { method: "POST" });
 }
+
 
 export async function fetchRegisters(): Promise<Registers[]> {
     const response = await fetchData("/api/registers/", { method: "GET" });
     return response.json();
 }
 
+
 export async function fetchBookings(): Promise<Bookings[]> {
     const response = await fetchData("/api/bookings/userview", { method: "GET" });
     return response.json();
 }
+
 
 export async function fetchAllBookings(): Promise<Bookings[]> {
     const response = await fetchData("/api/bookings/staffview", { method: "GET" });
     return response.json();
 }
 
+
 export async function fetchRosters(): Promise<Rosters[]> {
     const response = await fetchData("/api/rosters", { method: "GET" });
     return response.json();
 }
 
+
 export async function fetchCalendars(): Promise<Calendars[]> {
     const response = await fetchData("/api/calendars/", { method: "GET" });
     return response.json();
 }
+
 
 export interface RosterDetail {
     date: string,
@@ -178,6 +222,7 @@ export interface RosterDetail {
     availabilityTime: string[],
     availabilityStatus: string[],
 }
+
 
 export async function createRosters(rosters: RosterDetail): Promise<Rosters> {
     const response = await fetchData("/api/rosters",
@@ -191,6 +236,7 @@ export async function createRosters(rosters: RosterDetail): Promise<Rosters> {
     return response.json();
 }
 
+
 export async function updateRoasters(rosterId: string, rosters: RosterDetail): Promise<Rosters> {
     const response = await fetchData("/api/rosters/" + rosterId,
     {
@@ -202,6 +248,7 @@ export async function updateRoasters(rosterId: string, rosters: RosterDetail): P
     });
     return response.json();
 }
+
 
 export interface RegisterDetail {
     username: string,
@@ -225,6 +272,7 @@ export interface RegisterDetail {
     emergencyRelationship: string,
 }
 
+
 export async function createRegister(register: RegisterDetail): Promise<Registers> {
     const response = await fetchData("/api/registers/",
     {
@@ -236,6 +284,7 @@ export async function createRegister(register: RegisterDetail): Promise<Register
     });
     return response.json();
 }
+
 
 export interface BookingDetail {
     firstName: string,
@@ -254,6 +303,7 @@ export interface BookingDetail {
     additionalNotes?: string,
 }
 
+
 export async function createBooking(bookings: BookingDetail): Promise<Bookings> {
     const response = await fetchData("/api/bookings/",
     {
@@ -266,6 +316,7 @@ export async function createBooking(bookings: BookingDetail): Promise<Bookings> 
     return response.json();
 }
 
+
 export interface CalendarDetail {
     date: string,
     title: string,
@@ -275,8 +326,9 @@ export interface CalendarDetail {
     endTime: string,
 }
 
+
 export async function createCalendars(calendars: CalendarDetail): Promise<Calendars> {
-    const response = await fetchData("/api/calendars/", 
+    const response = await fetchData("/api/calendars/",
     {
         method: "POST",
         headers: {
@@ -286,6 +338,7 @@ export async function createCalendars(calendars: CalendarDetail): Promise<Calend
     });
     return response.json();
 }
+
 
 export async function updateCalendars(calendarId: string, calendars: CalendarDetail): Promise<Calendars> {
     const response = await fetchData("/api/calendars/" + calendarId,
@@ -299,26 +352,37 @@ export async function updateCalendars(calendarId: string, calendars: CalendarDet
     return response.json();
 }
 
+
 export async function deleteCalendars(calendarId: string) {
     await fetchData("/api/calendars/" + calendarId, { method: "DELETE" });
 }
+
 
 export async function deleteUserBooking(bookingId: string) {
     await fetchData("/api/bookings/userview/" + bookingId, { method: "DELETE" });
 }
 
+
 export async function deleteStaffBooking(bookingId: string) {
     await fetchData("/api/bookings/staffview/" + bookingId, { method: "DELETE" });
 }
+
 
 export async function deleteRegisterWithEmail(registerId: string) {
     await fetchData("/api/registers/rejected/" + registerId, { method: "DELETE" });
 }
 
+
 export async function deleteRegisterWithoutEmail(registerId: string) {
     await fetchData("/api/registers/approved/" + registerId, { method: "DELETE" });
 }
 
+
 export async function deleteRoster(rosterId: string) {
     await fetchData("/api/rosters/" + rosterId, { method: "DELETE" });
 }
+
+
+export default apiClient;
+
+

@@ -26,14 +26,17 @@ import ForgotPasswordReceivedPage from './pages/ForgotPasswordReceivedPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ViewCalendar from './pages/ViewCalendar';
+import { fetchUsers } from './network/websites_api';
 
 function App() {
-
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [loggedInStaff, setLoggedInStaff] = useState<Staff | null>(null);
   const [showUserSignUpModal, setshowUserSignUpModal] = useState(false);
   const [showUserLoginModal, setShowUserLoginModal] = useState(false);
   const [showStaffLoginModal, setShowStaffLoginModal] = useState(false);
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const logo = require("./styles/wakaeasternbaylogo.png");
 
@@ -46,6 +49,7 @@ function App() {
         console.error(error);
       }
     }
+
     async function fetchLoggedInStaff() {
       try {
         const staff = await WebsitesApi.getLoggedInStaff();
@@ -54,11 +58,25 @@ function App() {
         console.error(error);
       }
     }
-    
+
+    async function getUsers() {
+      try {
+        const userData = await fetchUsers();
+        setUsers(userData);
+        setLoading(false);
+      } catch (error) {
+        setError('Failed to fetch users');
+        setLoading(false);
+      }
+    }
+
     fetchLoggedInUser();
     fetchLoggedInStaff();
+    getUsers();
   }, []);
-  
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <BrowserRouter>
@@ -87,87 +105,6 @@ function App() {
             }} 
           />
         }
-
-        <div>
-          <center><img src={logo} alt="waka eastern bay logo" className={styles.img} /></center>
-        </div>
-        <Container className={styles.homePage}>
-          <>
-            {loggedInUser && loggedInStaff
-              ? <LoggedOutView />
-              : null
-            }
-          </>
-        </Container>
-        <Container>
-          <Routes>
-            <Route
-              path='/'
-              element={<HomePage />}
-            />
-            <Route
-              path='/*'
-              element={<NotFoundPage />}
-            />
-            <Route
-              path='/registerpage'
-              element={<RegisterPage onRegisterSaved={(register: Registers) => {}} />}
-            />
-            <Route
-              path='/viewregisters'
-              element={<ViewRegisterForm />}
-            />
-            <Route
-              path='/registerreceivedpage'
-              element={<RegisterReceivedPage />}
-            />
-            <Route
-              path='/forgotpassword'
-              element={<ForgotPasswordPage onEmailSubmitted={(user: User) => {}} />}
-            />
-            <Route
-              path='/resetpassword/:id'
-              element={<ResetPasswordPage onPasswordSubmitted={(user: User) => {}} />}
-            />
-            <Route
-              path='/forgotpasswordreceivedpage'
-              element={<ForgotPasswordReceivedPage />}
-            />
-            <Route
-              path='/bookingpage'
-              element={<BookingPage />}
-            />
-            <Route
-              path='/bookings/userview'
-              element={<BookingRequest />}
-            />
-            <Route
-              path='/bookings/staffview'
-              element={<ViewBookingRequest />}
-            />
-            <Route
-              path='/bookingreceivedpage'
-              element={<BookingReceivedPage />}
-            />
-            <Route
-              path='/viewrosters'
-              element={<ViewRoster />}
-            />
-            <Route
-              path='/viewcalendar'
-              element={<ViewCalendar />}
-            />
-            <Route
-              path='notfoundpage'
-              element={<NotFoundPage />}
-            />
-          </Routes>
-        </Container>
-        <Footer
-          loggedInStaff={loggedInStaff}
-          onStaffLoginClicked={() => setShowStaffLoginModal(true)}
-          onStaffLogoutSuccessful={() => setLoggedInStaff(null)}
-        />
         {showStaffLoginModal &&
           <StaffLoginModal
             onDismiss={() => setShowStaffLoginModal(false)}
@@ -177,6 +114,43 @@ function App() {
             }} 
           />
         }
+
+        <div>
+          <center><img src={logo} alt="waka eastern bay logo" className={styles.img} /></center>
+        </div>
+        <Container className={styles.homePage}>
+          {loggedInUser && loggedInStaff && <LoggedOutView />}
+        </Container>
+        <Container>
+          <Routes>
+            <Route path='/' element={<HomePage />} />
+            <Route path='/*' element={<NotFoundPage />} />
+            <Route path='/registerpage' element={<RegisterPage onRegisterSaved={(register: Registers) => {}} />} />
+            <Route path='/viewregisters' element={<ViewRegisterForm />} />
+            <Route path='/registerreceivedpage' element={<RegisterReceivedPage />} />
+            <Route path='/forgotpassword' element={<ForgotPasswordPage onEmailSubmitted={(user: User) => {}} />} />
+            <Route path='/resetpassword/:id' element={<ResetPasswordPage onPasswordSubmitted={(user: User) => {}} />} />
+            <Route path='/forgotpasswordreceivedpage' element={<ForgotPasswordReceivedPage />} />
+            <Route path='/bookingpage' element={<BookingPage />} />
+            <Route path='/bookings/userview' element={<BookingRequest />} />
+            <Route path='/bookings/staffview' element={<ViewBookingRequest />} />
+            <Route path='/bookingreceivedpage' element={<BookingReceivedPage />} />
+            <Route path='/viewrosters' element={<ViewRoster />} />
+            <Route path='/viewcalendar' element={<ViewCalendar />} />
+            <Route path='notfoundpage' element={<NotFoundPage />} />
+          </Routes>
+          <h1>Users</h1>
+          <ul>
+            {users.map((user) => (
+              <li key={user.id}>{user.name}</li>
+            ))}
+          </ul>
+        </Container>
+        <Footer
+          loggedInStaff={loggedInStaff}
+          onStaffLoginClicked={() => setShowStaffLoginModal(true)}
+          onStaffLogoutSuccessful={() => setLoggedInStaff(null)}
+        />
       </div>
     </BrowserRouter>
   );
