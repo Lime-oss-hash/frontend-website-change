@@ -7,9 +7,7 @@ import { Bookings } from "../models/bookings";
 import { Rosters } from "../models/rosters";
 import { Calendars } from "../models/calendars";
 
-
-const API_URL = process.env.REACT_APP_BACKEND_URL;
-
+const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -18,371 +16,374 @@ const apiClient = axios.create({
   },
 });
 
-
-async function fetchData(input: RequestInfo, init?: RequestInit) {
-    const response = await fetch(input, init);
-    if (response.ok) {
-        return response;
+const handleError = (error: any) => {
+  if (error.response) {
+    const errorMessage = error.response.data.error;
+    if (error.response.status === 401) {
+      throw new UnauthorizedError(errorMessage);
+    } else if (error.response.status === 409) {
+      throw new ConflictError(errorMessage);
     } else {
-        const errorBody = await response.json();
-        const errorMessage = errorBody.error;
-        if (response.status === 401) {
-            throw new UnauthorizedError(errorMessage);
-        } else if (response.status === 409) {
-            throw new ConflictError(errorMessage);
-        } else {
-            throw Error("Request failed with status: " + response.status + " message: " +
-            errorMessage+"===="+JSON.stringify(response)+"===="+JSON.stringify(init));
-        }
+      throw new Error(`Request failed with status: ${error.response.status} message: ${errorMessage}`);
     }
-}
+  } else {
+    throw new Error('An unknown error occurred');
+  }
+};
 
-
-export const fetchUsers = async () => {
+export const fetchUsers = async (): Promise<User[]> => {
   try {
     const response = await apiClient.get('/api/users');
     return response.data;
   } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
+    handleError(error);
+    return [];  // Return an empty array to satisfy the return type
   }
 };
 
-
-export async function getLoggedInUser(): Promise<User> {
-    const response = await fetchData("/api/users", { method: "GET" });
-    return response.json();
-}
-
+export const getLoggedInUser = async (): Promise<User> => {
+  try {
+    const response = await apiClient.get('/api/users');
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return null as any;  // Return null to satisfy the return type
+  }
+};
 
 export interface SignUpUserCredentials {
-    username: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    dob: string,
-    email: string,
-    address: string,
-    town: string,
-    postcode: string,
-    phoneNumber: string,
-    altPhoneNumber?: string,
-    gender: string,
-    ethnicity: string,
-    disability: string,
-    disabilityDetails?: string,
-    assistance: string,
-    emergencyName: string,
-    emergencyPhone: string,
-    emergencyRelationship: string,
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  dob: string;
+  email: string;
+  address: string;
+  town: string;
+  postcode: string;
+  phoneNumber: string;
+  altPhoneNumber?: string;
+  gender: string;
+  ethnicity: string;
+  disability: string;
+  disabilityDetails?: string;
+  assistance: string;
+  emergencyName: string;
+  emergencyPhone: string;
+  emergencyRelationship: string;
 }
 
-
-export async function SignUpUser(credentials: SignUpUserCredentials): Promise<User> {
-    const response = await fetchData("/api/users/usersignup",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-    });
-    return response.json();
-}
-
+export const SignUpUser = async (credentials: SignUpUserCredentials): Promise<User> => {
+  try {
+    const response = await apiClient.post('/api/users/usersignup', credentials);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return null as any;  // Return null to satisfy the return type
+  }
+};
 
 export interface UserLoginCredentials {
-    username: string,
-    password: string,
+  username: string;
+  password: string;
 }
 
+export const userLogin = async (credentials: UserLoginCredentials): Promise<User> => {
+  try {
+    const response = await apiClient.post('/api/users/userlogin', credentials);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return null as any;  // Return null to satisfy the return type
+  }
+};
 
-export async function userLogin(credentials: UserLoginCredentials) {
-    const response = await fetchData("/api/users/userlogin",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-    });
-    return response.json();
+export const userLogout = async (): Promise<void> => {
+  try {
+    await apiClient.post('/api/users/userlogout');
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export interface UserForgotPasswordCredentials {
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
-
-export async function userLogout() {
-    await fetchData("/api/users/userlogout", { method: "POST" });
-}
-
-
-export interface UserForgotPassowrdCredentials {
-    firstName: string,
-    lastName: string,
-    email: string,
-}
-
-
-export async function userForgotPassword(credentials: UserForgotPassowrdCredentials): Promise<User> {
-    const response = await fetchData("/api/users/userforgotpassword/:userId",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-    });
-    return response.json();
-}
-
+export const userForgotPassword = async (credentials: UserForgotPasswordCredentials): Promise<User> => {
+  try {
+    const response = await apiClient.post('/api/users/userforgotpassword/:userId', credentials);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return null as any;  // Return null to satisfy the return type
+  }
+};
 
 export interface UserChangePasswordCredentials {
-    password: string,
+  password: string;
 }
 
+export const userChangePassword = async (credentials: UserChangePasswordCredentials): Promise<User> => {
+  try {
+    const response = await apiClient.patch('/api/users/userresetpassword/:userId/accessToken', credentials);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return null as any;  // Return null to satisfy the return type
+  }
+};
 
-export async function userChangePassword(credentials: UserChangePasswordCredentials): Promise<User> {
-    const response = await fetchData("/api/users/userresetpassword/:userId/accessToken",
-    {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-    });
-    return response.json();
-}
-
-
-export async function getLoggedInStaff(): Promise<User> {
-    const response = await fetchData("/api/staffs", { method: "GET" });
-    return response.json();
-}
-
+export const getLoggedInStaff = async (): Promise<Staff> => {
+  try {
+    const response = await apiClient.get('/api/staffs');
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return null as any;  // Return null to satisfy the return type
+  }
+};
 
 export interface StaffLoginCredentials {
-    email: string,
-    password: string,
+  email: string;
+  password: string;
 }
 
+export const staffLogin = async (credentials: StaffLoginCredentials): Promise<Staff> => {
+  try {
+    const response = await apiClient.post('/api/staffs/stafflogin', credentials);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return null as any;  // Return null to satisfy the return type
+  }
+};
 
-export async function staffLogin(credentials: StaffLoginCredentials): Promise<Staff> {
-    const response = await fetchData("/api/staffs/stafflogin",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-    });
-    return response.json();
-}
+export const staffLogout = async (): Promise<void> => {
+  try {
+    await apiClient.post('/api/staffs/stafflogout');
+  } catch (error) {
+    handleError(error);
+  }
+};
 
+export const fetchRegisters = async (): Promise<Registers[]> => {
+  try {
+    const response = await apiClient.get('/api/registers/');
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return [];  // Return an empty array to satisfy the return type
+  }
+};
 
-export async function staffLogout() {
-    await fetchData("/api/staffs/stafflogout", { method: "POST" });
-}
+export const fetchBookings = async (): Promise<Bookings[]> => {
+  try {
+    const response = await apiClient.get('/api/bookings/userview');
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return [];  // Return an empty array to satisfy the return type
+  }
+};
 
+export const fetchAllBookings = async (): Promise<Bookings[]> => {
+  try {
+    const response = await apiClient.get('/api/bookings/staffview');
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return [];  // Return an empty array to satisfy the return type
+  }
+};
 
-export async function fetchRegisters(): Promise<Registers[]> {
-    const response = await fetchData("/api/registers/", { method: "GET" });
-    return response.json();
-}
+export const fetchRosters = async (): Promise<Rosters[]> => {
+  try {
+    const response = await apiClient.get('/api/rosters');
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return [];  // Return an empty array to satisfy the return type
+  }
+};
 
-
-export async function fetchBookings(): Promise<Bookings[]> {
-    const response = await fetchData("/api/bookings/userview", { method: "GET" });
-    return response.json();
-}
-
-
-export async function fetchAllBookings(): Promise<Bookings[]> {
-    const response = await fetchData("/api/bookings/staffview", { method: "GET" });
-    return response.json();
-}
-
-
-export async function fetchRosters(): Promise<Rosters[]> {
-    const response = await fetchData("/api/rosters", { method: "GET" });
-    return response.json();
-}
-
-
-export async function fetchCalendars(): Promise<Calendars[]> {
-    const response = await fetchData("/api/calendars/", { method: "GET" });
-    return response.json();
-}
-
+export const fetchCalendars = async (): Promise<Calendars[]> => {
+  try {
+    const response = await apiClient.get('/api/calendars/');
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return [];  // Return an empty array to satisfy the return type
+  }
+};
 
 export interface RosterDetail {
-    date: string,
-    driverName: string,
-    vehiclePlate: string,
-    startTime: string,
-    finishTime: string,
-    availabilityTime: string[],
-    availabilityStatus: string[],
+  date: string;
+  driverName: string;
+  vehiclePlate: string;
+  startTime: string;
+  finishTime: string;
+  availabilityTime: string[];
+  availabilityStatus: string[];
 }
 
+export const createRosters = async (rosters: RosterDetail): Promise<Rosters> => {
+  try {
+    const response = await apiClient.post('/api/rosters', rosters);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return null as any;  // Return null to satisfy the return type
+  }
+};
 
-export async function createRosters(rosters: RosterDetail): Promise<Rosters> {
-    const response = await fetchData("/api/rosters",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(rosters),
-    });
-    return response.json();
-}
-
-
-export async function updateRoasters(rosterId: string, rosters: RosterDetail): Promise<Rosters> {
-    const response = await fetchData("/api/rosters/" + rosterId,
-    {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(rosters),
-    });
-    return response.json();
-}
-
+export const updateRoasters = async (rosterId: string, rosters: RosterDetail): Promise<Rosters> => {
+  try {
+    const response = await apiClient.patch(`/api/rosters/${rosterId}`, rosters);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return null as any;  // Return null to satisfy the return type
+  }
+};
 
 export interface RegisterDetail {
-    username: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    dob: string,
-    email: string,
-    address: string,
-    town: string,
-    postcode: string,
-    phoneNumber: string,
-    altPhoneNumber?: string,
-    gender: string,
-    ethnicity: string,
-    disability: string,
-    disabilityDetails?: string,
-    assistance: string,
-    emergencyName: string,
-    emergencyPhone: string,
-    emergencyRelationship: string,
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  dob: string;
+  email: string;
+  address: string;
+  town: string;
+  postcode: string;
+  phoneNumber: string;
+  altPhoneNumber?: string;
+  gender: string;
+  ethnicity: string;
+  disability: string;
+  disabilityDetails?: string;
+  assistance: string;
+  emergencyName: string;
+  emergencyPhone: string;
+  emergencyRelationship: string;
 }
 
-
-export async function createRegister(register: RegisterDetail): Promise<Registers> {
-    const response = await fetchData("/api/registers/",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(register),
-    });
-    return response.json();
-}
-
+export const createRegister = async (register: RegisterDetail): Promise<Registers> => {
+  try {
+    const response = await apiClient.post('/api/registers/', register);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return null as any;  // Return null to satisfy the return type
+  }
+};
 
 export interface BookingDetail {
-    firstName: string,
-    lastName: string,
-    phoneNumber: string,
-    email: string,
-    pickup: string,
-    destination: string,
-    wheelchair: string,
-    passenger: number,
-    purpose: string,
-    trip: string,
-    date: string,
-    pickupTime: string,
-    dropoffTime: string,
-    additionalNotes?: string,
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  pickup: string;
+  destination: string;
+  wheelchair: string;
+  passenger: number;
+  purpose: string;
+  trip: string;
+  date: string;
+  pickupTime: string;
+  dropoffTime: string;
+  additionalNotes?: string;
 }
 
-
-export async function createBooking(bookings: BookingDetail): Promise<Bookings> {
-    const response = await fetchData("/api/bookings/",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bookings),
-    });
-    return response.json();
-}
-
+export const createBooking = async (bookings: BookingDetail): Promise<Bookings> => {
+  try {
+    const response = await apiClient.post('/api/bookings/', bookings);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return null as any;  // Return null to satisfy the return type
+  }
+};
 
 export interface CalendarDetail {
-    date: string,
-    title: string,
-    description: string,
-    location: string,
-    startTime: string,
-    endTime: string,
-}
-
-
-export async function createCalendars(calendars: CalendarDetail): Promise<Calendars> {
-    const response = await fetchData("/api/calendars/",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(calendars),
-    });
-    return response.json();
-}
-
-
-export async function updateCalendars(calendarId: string, calendars: CalendarDetail): Promise<Calendars> {
-    const response = await fetchData("/api/calendars/" + calendarId,
-    {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(calendars),
-    });
-    return response.json();
-}
-
-
-export async function deleteCalendars(calendarId: string) {
-    await fetchData("/api/calendars/" + calendarId, { method: "DELETE" });
-}
-
-
-export async function deleteUserBooking(bookingId: string) {
-    await fetchData("/api/bookings/userview/" + bookingId, { method: "DELETE" });
-}
-
-
-export async function deleteStaffBooking(bookingId: string) {
-    await fetchData("/api/bookings/staffview/" + bookingId, { method: "DELETE" });
-}
-
-
-export async function deleteRegisterWithEmail(registerId: string) {
-    await fetchData("/api/registers/rejected/" + registerId, { method: "DELETE" });
-}
-
-
-export async function deleteRegisterWithoutEmail(registerId: string) {
-    await fetchData("/api/registers/approved/" + registerId, { method: "DELETE" });
-}
-
-
-export async function deleteRoster(rosterId: string) {
-    await fetchData("/api/rosters/" + rosterId, { method: "DELETE" });
-}
-
-
-export default apiClient;
-
-
+    date: string;
+    title: string;
+    description: string;
+    location: string;
+    startTime: string;
+    endTime: string;
+  }
+  
+  export const createCalendars = async (calendars: CalendarDetail): Promise<Calendars> => {
+    try {
+      const response = await apiClient.post('/api/calendars/', calendars);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      return null as any;  // Return null to satisfy the return type
+    }
+  };
+  
+  export const updateCalendars = async (calendarId: string, calendars: CalendarDetail): Promise<Calendars> => {
+    try {
+      const response = await apiClient.patch(`/api/calendars/${calendarId}`, calendars);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      return null as any;  // Return null to satisfy the return type
+    }
+  };
+  
+  export const deleteCalendars = async (calendarId: string): Promise<void> => {
+    try {
+      await apiClient.delete(`/api/calendars/${calendarId}`);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+  
+  export const deleteUserBooking = async (bookingId: string): Promise<void> => {
+    try {
+      await apiClient.delete(`/api/bookings/userview/${bookingId}`);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+  
+  export const deleteStaffBooking = async (bookingId: string): Promise<void> => {
+    try {
+      await apiClient.delete(`/api/bookings/staffview/${bookingId}`);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+  
+  export const deleteRegisterWithEmail = async (registerId: string): Promise<void> => {
+    try {
+      await apiClient.delete(`/api/registers/rejected/${registerId}`);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+  
+  export const deleteRegisterWithoutEmail = async (registerId: string): Promise<void> => {
+    try {
+      await apiClient.delete(`/api/registers/approved/${registerId}`);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+  
+  export const deleteRoster = async (rosterId: string): Promise<void> => {
+    try {
+      await apiClient.delete(`/api/rosters/${rosterId}`);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+  
+  export default apiClient;
+  
