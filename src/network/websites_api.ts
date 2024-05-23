@@ -107,10 +107,10 @@ export const userLogout = async (): Promise<void> => {
 };
 
 export interface UserForgotPasswordCredentials {
-  firstName: string;
-  lastName: string;
-  email: string;
-}
+    firstName: string;
+    lastName: string;
+    email: string;
+  }
 
 export const userForgotPassword = async (credentials: UserForgotPasswordCredentials): Promise<User> => {
   try {
